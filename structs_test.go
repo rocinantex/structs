@@ -1451,3 +1451,33 @@ func TestMap_InterfaceTypeWithMapValue(t *testing.T) {
 
 	_ = Map(a)
 }
+
+func TestMap_FlattenAnonymous(t *testing.T) {
+	type A struct {
+		Name string
+	}
+
+	type B struct {
+		A
+
+		Other string
+	}
+	b := &B{
+		A: A{
+			Name: "name",
+		},
+		Other: "other",
+	}
+
+	s := New(b)
+	s.FlattenAnonymous = true
+	m := s.Map()
+
+	if typ := reflect.TypeOf(m).Kind(); typ != reflect.Map {
+		t.Errorf("Map should return a map type, got: %v", typ)
+	}
+
+	if m["Name"] != b.Name {
+		t.Errorf("Value for field person should be %s, got: %s", b.Name, m["Name"])
+	}
+}
