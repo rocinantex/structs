@@ -1459,17 +1459,19 @@ func TestMap_FlattenAnonymous(t *testing.T) {
 
 	type B struct {
 		A
-
-		Other string
 	}
-	b := &B{
-		A: A{
-			Name: "name",
+
+	type C struct {
+		B
+	}
+
+	c := &C{
+		B: B{
+			A: A{Name: "name"},
 		},
-		Other: "other",
 	}
 
-	s := New(b)
+	s := New(c)
 	s.FlattenAnonymous = true
 	m := s.Map()
 
@@ -1477,7 +1479,7 @@ func TestMap_FlattenAnonymous(t *testing.T) {
 		t.Errorf("Map should return a map type, got: %v", typ)
 	}
 
-	if m["Name"] != b.Name {
-		t.Errorf("Value for field person should be %s, got: %s", b.Name, m["Name"])
+	if m["Name"] != c.Name {
+		t.Errorf("Value for field person should be %s, got: %s", c.Name, m["Name"])
 	}
 }
